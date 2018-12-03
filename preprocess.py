@@ -9,6 +9,7 @@ import os
 import numpy as np
 import scipy.misc
 import random
+from tqdm import tqdm
 
 def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
     
@@ -18,7 +19,11 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
     
     input_data_list = os.listdir(input_path)
     
-    for f in input_data_list:
+    data_pbar = tqdm(range(len(input_data_list)))
+    
+    for f_idx in data_pbar:
+        f = input_data_list[f_idx]
+        
         file_name = os.path.splitext(f)[0]
 
         curr_input = np.array(scipy.misc.imread(os.path.join(input_path, f)))
@@ -27,9 +32,9 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
         if nrml_enable is True:
             curr_input = curr_input / 255.
             
-        input_data.append(curr_input)
-        label_data.append(curr_label)            
-        image_names.append(file_name)
+        input_data = np.append(input_data, curr_input)
+        label_data = np.append(label_data, curr_label)
+        image_names = np.append(image_names, file_name)
 
         if aug_enable is True:
             # ==================== Flip ====================
@@ -177,6 +182,8 @@ def random_crop_image(input, label, image_name, sub_size, crop_num):
             output_label.append(0)        
             output_image.append(curr_input)
             output_meta_data.append((image_name, [h,w], "random_grid", "normal"))
+
+        count += 1
 
     output_image = np.array(output_image)
     output_label = np.array(output_label)
