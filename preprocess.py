@@ -13,9 +13,9 @@ from tqdm import tqdm
 
 def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
     
-    input_data = np.array([])
-    label_data = np.array([])
-    image_names = np.array([])
+    input_data = []
+    label_data = []
+    image_names = []
     
     input_data_list = os.listdir(input_path)
     
@@ -29,12 +29,15 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
         curr_input = np.array(scipy.misc.imread(os.path.join(input_path, f)))
         curr_label = np.array(scipy.misc.imread(os.path.join(label_path, f)))
 
+        if len(curr_input.shape) < 3:
+            curr_input = np.expand_dims(curr_input, axis=-1)
+
         if nrml_enable is True:
             curr_input = curr_input / 255.
             
-        input_data = np.append(input_data, curr_input)
-        label_data = np.append(label_data, curr_label)
-        image_names = np.append(image_names, file_name)
+        input_data.append(curr_input)
+        label_data.append(curr_label)
+        image_names.append(file_name)
 
         if aug_enable is True:
             # ==================== Flip ====================
@@ -44,14 +47,14 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
             curr_image_fliplr = np.fliplr(curr_input)
             curr_code_fliplr = np.fliplr(curr_label)
 
-            image_names = np.append(image_names, file_name + "_flipud")
-            image_names = np.append(image_names, file_name + "_fliplr")              
+            image_names.append(file_name + "_flipud")                
+            image_names.append(file_name + "_fliplr")                                
             
-            input_data = np.append(input_data, curr_image_flipud)
-            input_data = np.append(input_data, curr_image_fliplr)
+            input_data.append(curr_image_flipud)
+            input_data.append(curr_image_fliplr)
             
-            label_data = np.append(label_data, curr_code_flipud)
-            label_data = np.append(label_data, curr_code_fliplr)
+            label_data.append(curr_code_flipud)
+            label_data.append(curr_code_fliplr)
             
             # ==================== Rotate ====================
             curr_image_rot90 = np.rot90(curr_input)
@@ -63,17 +66,17 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
             curr_image_rot270 = np.rot90(curr_image_rot180)
             curr_code_rot270 = np.rot90(curr_code_rot180)                   
 
-            image_names = np.append(image_names, file_name + "_rot90")
-            image_names = np.append(image_names, file_name + "_rot180")
-            image_names = np.append(image_names, file_name + "_rot270")
+            image_names.append(file_name + "_rot90")                
+            image_names.append(file_name + "_rot180")                
+            image_names.append(file_name + "_rot270")     
 
-            input_data = np.append(input_data, curr_image_rot90)
-            input_data = np.append(input_data, curr_image_rot180)
-            input_data = np.append(input_data, curr_image_rot270)
+            input_data.append(curr_image_rot90)
+            input_data.append(curr_image_rot180)                
+            input_data.append(curr_image_rot270)
             
-            label_data = np.append(label_data, curr_code_rot90)
-            label_data = np.append(label_data, curr_code_rot180)
-            label_data = np.append(label_data, curr_code_rot270)               
+            label_data.append(curr_code_rot90)
+            label_data.append(curr_code_rot180)
+            label_data.append(curr_code_rot270)                
             
             # ==================== Flip ud & Rotate ====================
             curr_image_flipud_rot90 = np.rot90(curr_image_flipud)
@@ -85,17 +88,17 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
             curr_image_flipud_rot270 = np.rot90(curr_image_flipud_rot180)
             curr_code_flipud_rot270 = np.rot90(curr_code_flipud_rot180)                   
 
-            image_names = np.append(image_names, file_name + "_flipud_rot90")
-            image_names = np.append(image_names, file_name + "_flipud_rot180")
-            image_names = np.append(image_names, file_name + "_flipud_rot270")
+            image_names.append(file_name + "_flipud_rot90")                
+            image_names.append(file_name + "_flipud_rot180")                
+            image_names.append(file_name + "_flipud_rot270")     
 
-            input_data = np.append(input_data, curr_image_flipud_rot90)
-            input_data = np.append(input_data, curr_image_flipud_rot180)
-            input_data = np.append(input_data, curr_image_flipud_rot270)
+            input_data.append(curr_image_flipud_rot90)
+            input_data.append(curr_image_flipud_rot180)                
+            input_data.append(curr_image_flipud_rot270)
             
-            label_data = np.append(label_data, curr_code_flipud_rot90)
-            label_data = np.append(label_data, curr_code_flipud_rot180)
-            label_data = np.append(label_data, curr_code_flipud_rot270)   
+            label_data.append(curr_code_flipud_rot90)
+            label_data.append(curr_code_flipud_rot180)
+            label_data.append(curr_code_flipud_rot270)                
 
             # ==================== Flip lr & Rotate ====================
             curr_image_fliplr_rot90 = np.rot90(curr_image_fliplr)
@@ -107,19 +110,19 @@ def load_image_data(input_path, label_path, aug_enable=True, nrml_enable=False):
             curr_image_fliplr_rot270 = np.rot90(curr_image_fliplr_rot180)
             curr_code_fliplr_rot270 = np.rot90(curr_code_fliplr_rot180)                   
 
-            image_names = np.append(image_names, file_name + "_fliplr_rot90")
-            image_names = np.append(image_names, file_name + "_fliplr_rot180")
-            image_names = np.append(image_names, file_name + "_fliplr_rot270")
+            image_names.append(file_name + "_fliplr_rot90")                
+            image_names.append(file_name + "_fliplr_rot180")                
+            image_names.append(file_name + "_fliplr_rot270")     
 
-            input_data = np.append(input_data, curr_image_fliplr_rot90)
-            input_data = np.append(input_data, curr_image_fliplr_rot180)
-            input_data = np.append(input_data, curr_image_fliplr_rot270)
+            input_data.append(curr_image_fliplr_rot90)
+            input_data.append(curr_image_fliplr_rot180)                
+            input_data.append(curr_image_fliplr_rot270)
             
-            label_data = np.append(label_data, curr_code_fliplr_rot90)
-            label_data = np.append(label_data, curr_code_fliplr_rot180)
-            label_data = np.append(label_data, curr_code_fliplr_rot270)                          
-   
-    print("[load_image_data] input_data shape: {}".format())
+            label_data.append(curr_code_fliplr_rot90)
+            label_data.append(curr_code_fliplr_rot180)
+            label_data.append(curr_code_fliplr_rot270) 
+            
+    print("[load_image_data] input_data shape: {}".format(np.array(input_data).shape))
     
     return input_data, label_data, image_names
 
@@ -148,10 +151,9 @@ def split_image(input, label, image_name, sub_size):
 
     output_image = np.array(output_image)
     output_label = np.array(output_label)
-    output_meta_data = np.array(output_meta_data)
     
-    print("[split_image] normal: {}, abnormal: {}".format(output_label.shape[0] - output_label.sum(), output_label.sum()))                                
-    print("[split_image] output_label shape: {}".format(output_label.shape))
+    #print("[split_image] normal: {}, abnormal: {}".format(output_label.shape[0] - output_label.sum(), output_label.sum()))                                
+    #print("[split_image] output_label shape: {}".format(output_label.shape))
     
     return output_image, output_label, output_meta_data
 
@@ -187,27 +189,26 @@ def random_crop_image(input, label, image_name, sub_size, crop_num):
 
     output_image = np.array(output_image)
     output_label = np.array(output_label)
-    output_meta_data = np.array(output_meta_data)
 
-    print("[random_crop_image] normal: {}, abnormal: {}".format(output_label.shape[0] - output_label.sum(), output_label.sum()))              
-    print("[random_crop_image] output_label shape: {}".format(np.array(output_label).shape))
+    #print("[random_crop_image] normal: {}, abnormal: {}".format(output_label.shape[0] - output_label.sum(), output_label.sum()))              
+    #print("[random_crop_image] output_label shape: {}".format(np.array(output_label).shape))
     
     return output_image, output_label, output_meta_data
 
 def main_process():
     
     data_type = 'train'
-    SUB_SIZE = 128
+    SUB_SIZE = 200
     CROP_NUM = 512
     
-    input_path = '/data/wei/dataset/MDetection/Stem_cell/train_data/data/'
-    label_path = '/data/wei/dataset/MDetection/Stem_cell/train_data/label/'
+    input_path = '/data/wei/dataset/MDetection/Stem_cell/' + data_type + '_data/data_preprocessed/'
+    label_path = '/data/wei/dataset/MDetection/Stem_cell/' + data_type + '_data/label/'
     
     # Define containers
-    normal_data = np.array([])
-    normal_label = np.array([])
-    abnormal_data = np.array([])
-    abnormal_label = np.array([])
+    normal_data = []
+    normal_label = []
+    abnormal_data = []
+    abnormal_label = []
     
     # Load all the images and apply augmentation process
     input_data, label_data, image_names = load_image_data(input_path, label_path)
@@ -224,16 +225,16 @@ def main_process():
         # Classifiy the data
         for p_idx in range(patch_label.shape[0]):
             if patch_label[p_idx] == 1:    
-                abnormal_data = np.append(abnormal_data, patch_image[p_idx])
-                abnormal_label = np.append(abnormal_label, patch_label[p_idx])
+                abnormal_data.append(patch_image[p_idx])
+                abnormal_label.append(patch_label[p_idx])
             elif patch_label[p_idx] == 0:    
-                normal_data = np.append(normal_data, patch_image[p_idx])
-                normal_label = np.append(normal_label, patch_label[p_idx])
+                normal_data.append(patch_image[p_idx])
+                normal_label.append(patch_label[p_idx])
     
-    print("[main_process] normal_data: {}, abnormal_data: {}".format(normal_data.shape, abnormal_data.shape))
+    print("[main_process] normal_data: {}, abnormal_data: {}".format(len(normal_data), len(abnormal_data)))
     
-    np.save('normal_data.npy', {'data':normal_data, 'label':normal_label})
-    np.save('abnormal_data.npy', {'data':normal_data, 'label':normal_label})
+    np.save('/data/wei/dataset/MDetection/Stem_cell/' + data_type + '_data/normal_data_.npy', {'data':normal_data, 'label':normal_label})
+    np.save('/data/wei/dataset/MDetection/Stem_cell/' + data_type + '_data/abnormal_data_.npy', {'data':abnormal_data, 'label':abnormal_label})
     
 if __name__ == '__main__':
 
